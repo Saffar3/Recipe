@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Image from 'next/image';
 
 interface RecipeModalProps {
   recipe: {
@@ -53,7 +54,13 @@ export default function RecipeModal({ recipe, onClose }: RecipeModalProps) {
 
         {/* Recipe Image */}
         <div className="w-full h-72 relative">
-          <img src={recipe.image} alt={recipe.title} className="w-full h-full object-cover" />
+          <Image
+            src={recipe.image}
+            alt={recipe.title}
+            width={800}
+            height={400}
+            className="w-full h-full object-cover"
+          />
         </div>
 
         {/* Recipe Content */}

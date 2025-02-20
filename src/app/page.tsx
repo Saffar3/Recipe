@@ -1,8 +1,9 @@
 'use client';
 import { useState, useEffect } from 'react';
-import Image from "next/image";
 import RecipeModal from './components/RecipeModal';
 import ArticleModal from './components/ArticleModal';
+import Image from 'next/image';
+import React from 'react';
 
 interface BaseRecipe {
   id: number;
@@ -272,12 +273,16 @@ export default function Home() {
   };
 
   // Фильтрация рецептов по активной категории
-  useEffect(() => {
+  const filterRecipes = React.useCallback(() => {
     const filtered = activeCategory === 'Все' 
       ? popularRecipes 
       : popularRecipes.filter(recipe => recipe.category === activeCategory);
     setFilteredPopularRecipes(filtered);
-  }, [activeCategory]);
+  }, [activeCategory, popularRecipes]);
+
+  useEffect(() => {
+    filterRecipes();
+  }, [filterRecipes]);
 
   // Закрытие результатов поиска при клике вне
   useEffect(() => {
@@ -324,8 +329,14 @@ export default function Home() {
                   setShowResults(false);
                 }}
               >
-                <div className="w-12 h-12 rounded-lg bg-gray-200 flex-none overflow-hidden">
-                  <img src={recipe.image} alt={recipe.title} className="w-full h-full object-cover" />
+                <div className="w-12 h-12 rounded-lg bg-gray-200 flex-none overflow-hidden relative">
+                  <Image
+                    src={recipe.image}
+                    alt={recipe.title}
+                    width={48}
+                    height={48}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <div className="flex-1 min-w-0">
                   <h4 className="font-medium text-gray-900 truncate">{recipe.title}</h4>
@@ -357,7 +368,13 @@ export default function Home() {
               onClick={() => setSelectedArticle(article)}
             >
               <div className="relative h-[200px]">
-                <img src={article.image} alt={article.title} className="w-full h-full object-cover" />
+                <Image
+                  src={article.image}
+                  alt={article.title}
+                  width={400}
+                  height={200}
+                  className="w-full h-full object-cover"
+                />
                 <div className="absolute top-4 left-4">
                   <span className="px-3 py-1 bg-white rounded-full text-sm font-medium text-gray-900">
                     {article.category}
@@ -408,7 +425,13 @@ export default function Home() {
               onClick={() => setSelectedRecipe(recipe)}
             >
               <div className="relative h-[180px]">
-                <img src={recipe.image} alt={recipe.title} className="w-full h-full object-cover" />
+                <Image
+                  src={recipe.image}
+                  alt={recipe.title}
+                  width={400}
+                  height={180}
+                  className="w-full h-full object-cover"
+                />
                 <button 
                   className="absolute top-4 right-4 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-lg"
                   onClick={(e: React.MouseEvent) => {

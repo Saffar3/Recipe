@@ -1,3 +1,5 @@
+import Image from 'next/image';
+
 export default function CategoriesPage() {
   const categories = [
     {
@@ -59,11 +61,13 @@ export default function CategoriesPage() {
             key={category.id}
             className="group bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
           >
-            <div className="relative h-48">
-              <img
+            <div className="relative h-40 sm:h-48">
+              <Image
                 src={category.image}
                 alt={category.name}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                width={400}
+                height={250}
+                className="w-full h-48 object-cover rounded-lg"
               />
               <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors">
                 <div className="absolute bottom-4 left-4 text-white">

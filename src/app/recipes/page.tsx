@@ -1,3 +1,5 @@
+import Image from 'next/image';
+
 export default function RecipesPage() {
   const recipes = [
     {
@@ -85,9 +87,11 @@ export default function RecipesPage() {
             className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
           >
             <div className="relative h-40 sm:h-48">
-              <img
+              <Image
                 src={recipe.image}
                 alt={recipe.title}
+                width={400}
+                height={300}
                 className="w-full h-full object-cover"
               />
             </div>

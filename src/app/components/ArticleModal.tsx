@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 
 interface ArticleModalProps {
   article: {
@@ -27,7 +28,13 @@ export default function ArticleModal({ article, onClose }: ArticleModalProps) {
 
         {/* Article Image */}
         <div className="w-full h-72 relative">
-          <img src={article.image} alt={article.title} className="w-full h-full object-cover" />
+          <Image
+            src={article.image}
+            alt={article.title}
+            width={800}
+            height={400}
+            className="w-full h-full object-cover"
+          />
           <div className="absolute top-4 right-4">
             <span className="px-3 py-1 bg-white rounded-full text-sm font-medium text-gray-900">
               {article.category}
