@@ -4,6 +4,7 @@ import RecipeModal from './components/RecipeModal';
 import ArticleModal from './components/ArticleModal';
 import Image from 'next/image';
 import React from 'react';
+import { initTelegramApp, getUserData, setupMainButton } from '../utils/telegram';
 
 interface BaseRecipe {
   id: number;
@@ -37,6 +38,16 @@ interface FeaturedRecipe extends BaseRecipe {
 
 interface PopularRecipe extends BaseRecipe {
   calories: string;
+  description?: string;
+  ingredients?: {
+    name: string;
+    quantity: number;
+    unit?: string;
+  }[];
+  instructions?: string[];
+  proteins?: string;
+  carbs?: string;
+  fats?: string;
 }
 
 export default function Home() {
@@ -150,6 +161,7 @@ export default function Home() {
 В заключение, искусство приготовления соусов – это синтез кулинарных знаний, внимания к деталям и творческого подхода. Экспериментируя с ингредиентами и соблюдая основные принципы, вы сможете создавать соусы, способные преобразить любое блюдо, даря ему богатый вкус и аромат. Каждая новая рецептура открывает новые горизонты в мире гастрономии и превращает процесс приготовления в настоящее произведение искусства.`
     }
     
+    
   ];
 
   const categories = [
@@ -167,7 +179,27 @@ export default function Home() {
       calories: "64 Ккал",
       time: "12 мин",
       image: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=800&auto=format&fit=crop&q=60",
-      category: "Завтрак"
+      category: "Завтрак",
+      description: "Воздушные и нежные японские панкейки - идеальный завтрак для всей семьи. Эти оладьи отличаются от обычных своей высотой и невероятной пышностью.",
+      ingredients: [
+        { name: "Яйца", quantity: 2, unit: "шт" },
+        { name: "Молоко", quantity: 200, unit: "мл" },
+        { name: "Мука", quantity: 150, unit: "г" },
+        { name: "Разрыхлитель", quantity: 1, unit: "ч.л." },
+        { name: "Сахар", quantity: 50, unit: "г" },
+        { name: "Ванильный экстракт", quantity: 0.5, unit: "ч.л." }
+      ],
+      instructions: [
+        "Отделите белки от желтков",
+        "Взбейте белки с половиной сахара до устойчивых пиков",
+        "В отдельной миске смешайте желтки с молоком и ванилью",
+        "Добавьте муку и разрыхлитель",
+        "Аккуратно вмешайте взбитые белки",
+        "Жарьте на медленном огне под крышкой"
+      ],
+      proteins: "4.2г",
+      carbs: "8.5г",
+      fats: "2.1г"
     },
     {
       id: 3,
@@ -175,7 +207,32 @@ export default function Home() {
       calories: "320 Ккал",
       time: "25 мин",
       image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&auto=format&fit=crop&q=60",
-      category: "Обед"
+      category: "Обед",
+      description: "Полезный и питательный средиземноморский боул с киноа, свежими овощами и соусом тахини. Идеальное сочетание белков, полезных жиров и сложных углеводов.",
+      ingredients: [
+        { name: "Киноа", quantity: 100, unit: "г" },
+        { name: "Нут консервированный", quantity: 200, unit: "г" },
+        { name: "Помидоры черри", quantity: 150, unit: "г" },
+        { name: "Огурец", quantity: 1, unit: "шт" },
+        { name: "Красный лук", quantity: 0.5, unit: "шт" },
+        { name: "Оливки", quantity: 50, unit: "г" },
+        { name: "Фета", quantity: 50, unit: "г" },
+        { name: "Тахини", quantity: 2, unit: "ст.л." },
+        { name: "Лимонный сок", quantity: 1, unit: "ст.л." },
+        { name: "Оливковое масло", quantity: 2, unit: "ст.л." }
+      ],
+      instructions: [
+        "Промойте киноа и варите в подсоленной воде 15-20 минут до готовности",
+        "Нарежьте помидоры черри пополам, огурец кубиками, лук тонкими полукольцами",
+        "Приготовьте соус: смешайте тахини, лимонный сок и оливковое масло",
+        "Выложите киноа в основу боула",
+        "Добавьте нут и нарезанные овощи",
+        "Посыпьте раскрошенной фетой и оливками",
+        "Полейте соусом тахини"
+      ],
+      proteins: "12г",
+      carbs: "42г",
+      fats: "18г"
     },
     {
       id: 4,
@@ -183,7 +240,33 @@ export default function Home() {
       calories: "410 Ккал",
       time: "35 мин",
       image: "https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=800&auto=format&fit=crop&q=60",
-      category: "Ужин"
+      category: "Ужин",
+      description: "Ароматное и пикантное тайское карри с кокосовым молоком, овощами и курицей. Идеальное сочетание острых и сладких вкусов, характерных для тайской кухни.",
+      ingredients: [
+        { name: "Куриное филе", quantity: 300, unit: "г" },
+        { name: "Кокосовое молоко", quantity: 400, unit: "мл" },
+        { name: "Паста зеленого карри", quantity: 2, unit: "ст.л." },
+        { name: "Баклажаны", quantity: 1, unit: "шт" },
+        { name: "Болгарский перец", quantity: 2, unit: "шт" },
+        { name: "Бамбуковые побеги", quantity: 100, unit: "г" },
+        { name: "Рыбный соус", quantity: 1, unit: "ст.л." },
+        { name: "Пальмовый сахар", quantity: 1, unit: "ст.л." },
+        { name: "Лайм", quantity: 1, unit: "шт" },
+        { name: "Базилик тайский", quantity: 1, unit: "пучок" }
+      ],
+      instructions: [
+        "Нарежьте куриное филе небольшими кусочками",
+        "Обжарьте пасту карри на среднем огне до появления аромата",
+        "Добавьте кокосовое молоко и доведите до кипения",
+        "Добавьте курицу и готовьте 10 минут",
+        "Добавьте нарезанные овощи и бамбуковые побеги",
+        "Приправьте рыбным соусом и пальмовым сахаром",
+        "Готовьте еще 5-7 минут до готовности овощей",
+        "Добавьте сок лайма и листья базилика перед подачей"
+      ],
+      proteins: "28г",
+      carbs: "15г",
+      fats: "32г"
     },
     {
       id: 5,
@@ -191,7 +274,31 @@ export default function Home() {
       calories: "180 Ккал",
       time: "15 мин",
       image: "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=800&auto=format&fit=crop&q=60",
-      category: "Обед"
+      category: "Обед",
+      description: "Свежий и легкий греческий салат с сочными помидорами, огурцами, маслинами и фетой. Заправлен оливковым маслом и орегано.",
+      ingredients: [
+        { name: "Помидоры", quantity: 3, unit: "шт" },
+        { name: "Огурцы", quantity: 2, unit: "шт" },
+        { name: "Красный лук", quantity: 1, unit: "шт" },
+        { name: "Болгарский перец", quantity: 1, unit: "шт" },
+        { name: "Фета", quantity: 150, unit: "г" },
+        { name: "Маслины", quantity: 100, unit: "г" },
+        { name: "Оливковое масло", quantity: 3, unit: "ст.л." },
+        { name: "Орегано", quantity: 1, unit: "ч.л." }
+      ],
+      instructions: [
+        "Нарежьте помидоры и огурцы крупными кусками",
+        "Нарежьте лук тонкими полукольцами",
+        "Нарежьте болгарский перец соломкой",
+        "Выложите овощи в салатник",
+        "Добавьте целые маслины",
+        "Выложите сверху крупно нарезанную фету",
+        "Полейте оливковым маслом",
+        "Посыпьте орегано и подавайте"
+      ],
+      proteins: "8г",
+      carbs: "12г",
+      fats: "15г"
     },
     {
       id: 6,
@@ -199,7 +306,32 @@ export default function Home() {
       calories: "280 Ккал",
       time: "45 мин",
       image: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=800&auto=format&fit=crop&q=60",
-      category: "Ужин"
+      category: "Ужин",
+      description: "Домашние суши роллы с лососем, авокадо и огурцом. Подаются с соевым соусом, васаби и маринованным имбирем.",
+      ingredients: [
+        { name: "Рис для суши", quantity: 300, unit: "г" },
+        { name: "Нори", quantity: 4, unit: "листа" },
+        { name: "Лосось", quantity: 200, unit: "г" },
+        { name: "Авокадо", quantity: 1, unit: "шт" },
+        { name: "Огурец", quantity: 1, unit: "шт" },
+        { name: "Рисовый уксус", quantity: 3, unit: "ст.л." },
+        { name: "Васаби", quantity: 1, unit: "ч.л." },
+        { name: "Соевый соус", quantity: 50, unit: "мл" }
+      ],
+      instructions: [
+        "Промойте рис до прозрачной воды",
+        "Варите рис согласно инструкции",
+        "Заправьте рис рисовым уксусом",
+        "Нарежьте лосось, авокадо и огурец тонкими полосками",
+        "Положите лист нори на коврик для роллов",
+        "Распределите рис тонким слоем по нори",
+        "Выложите начинку на край",
+        "Сверните ролл с помощью коврика",
+        "Нарежьте ролл на 8 частей"
+      ],
+      proteins: "18г",
+      carbs: "38г",
+      fats: "9г"
     },
     {
       id: 7,
@@ -207,7 +339,33 @@ export default function Home() {
       calories: "290 Ккал",
       time: "20 мин",
       image: "https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?w=800&auto=format&fit=crop&q=60",
-      category: "Обед"
+      category: "Обед",
+      description: "Питательный вегетарианский боул с разнообразными овощами, киноа и авокадо. Богат витаминами, минералами и растительным белком.",
+      ingredients: [
+        { name: "Киноа", quantity: 100, unit: "г" },
+        { name: "Сладкий картофель", quantity: 1, unit: "шт" },
+        { name: "Авокадо", quantity: 1, unit: "шт" },
+        { name: "Нут", quantity: 200, unit: "г" },
+        { name: "Шпинат", quantity: 100, unit: "г" },
+        { name: "Морковь", quantity: 2, unit: "шт" },
+        { name: "Тыквенные семечки", quantity: 30, unit: "г" },
+        { name: "Лимонный сок", quantity: 1, unit: "ст.л." },
+        { name: "Оливковое масло", quantity: 2, unit: "ст.л." }
+      ],
+      instructions: [
+        "Отварите киноа согласно инструкции",
+        "Нарежьте сладкий картофель кубиками и запеките в духовке",
+        "Обжарьте нут со специями до хрустящей корочки",
+        "Нарежьте авокадо тонкими ломтиками",
+        "Натрите морковь на крупной терке",
+        "Выложите все ингредиенты в боул",
+        "Добавьте свежий шпинат",
+        "Посыпьте тыквенными семечками",
+        "Заправьте оливковым маслом и лимонным соком"
+      ],
+      proteins: "12г",
+      carbs: "35г",
+      fats: "16г"
     },
     {
       id: 8,
@@ -215,7 +373,32 @@ export default function Home() {
       calories: "380 Ккал",
       time: "25 мин",
       image: "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=800&auto=format&fit=crop&q=60",
-      category: "Ужин"
+      category: "Ужин",
+      description: "Сливочная паста с ароматными грибами, чесноком и пармезаном. Классическое итальянское блюдо с богатым вкусом.",
+      ingredients: [
+        { name: "Паста", quantity: 200, unit: "г" },
+        { name: "Шампиньоны", quantity: 300, unit: "г" },
+        { name: "Сливки 33%", quantity: 200, unit: "мл" },
+        { name: "Чеснок", quantity: 3, unit: "зубчика" },
+        { name: "Лук", quantity: 1, unit: "шт" },
+        { name: "Пармезан", quantity: 50, unit: "г" },
+        { name: "Тимьян", quantity: 2, unit: "веточки" },
+        { name: "Оливковое масло", quantity: 2, unit: "ст.л." }
+      ],
+      instructions: [
+        "Отварите пасту в подсоленной воде до состояния аль денте",
+        "Нарежьте грибы тонкими ломтиками",
+        "Измельчите чеснок и лук",
+        "Обжарьте лук до прозрачности",
+        "Добавьте грибы и жарьте до золотистого цвета",
+        "Влейте сливки и добавьте тимьян",
+        "Готовьте соус 5-7 минут до загустения",
+        "Добавьте готовую пасту в соус",
+        "Посыпьте тертым пармезаном"
+      ],
+      proteins: "14г",
+      carbs: "48г",
+      fats: "22г"
     },
     {
       id: 9,
@@ -223,7 +406,28 @@ export default function Home() {
       calories: "210 Ккал",
       time: "10 мин",
       image: "https://images.unsplash.com/photo-1626790680787-de5e9a07bcf2?w=800&auto=format&fit=crop&q=60",
-      category: "Завтрак"
+      category: "Завтрак",
+      description: "Освежающий смузи боул с ягодами, бананом и полезными топпингами. Идеальный вариант для легкого и питательного завтрака.",
+      ingredients: [
+        { name: "Замороженные ягоды", quantity: 200, unit: "г" },
+        { name: "Банан", quantity: 1, unit: "шт" },
+        { name: "Греческий йогурт", quantity: 150, unit: "г" },
+        { name: "Мед", quantity: 1, unit: "ст.л." },
+        { name: "Гранола", quantity: 30, unit: "г" },
+        { name: "Чиа", quantity: 1, unit: "ст.л." },
+        { name: "Кокосовая стружка", quantity: 1, unit: "ст.л." }
+      ],
+      instructions: [
+        "Взбейте замороженные ягоды с бананом и йогуртом в блендере",
+        "Добавьте мед по вкусу",
+        "Перелейте смузи в глубокую тарелку",
+        "Посыпьте гранолой",
+        "Добавьте семена чиа",
+        "Украсьте кокосовой стружкой и свежими ягодами"
+      ],
+      proteins: "8г",
+      carbs: "32г",
+      fats: "6г"
     },
     {
       id: 10,
@@ -231,7 +435,31 @@ export default function Home() {
       calories: "350 Ккал",
       time: "30 мин",
       image: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=800&auto=format&fit=crop&q=60",
-      category: "Ужин"
+      category: "Ужин",
+      description: "Нежный лосось на гриле с хрустящей спаржей и лимонным соусом. Богат омега-3 жирными кислотами и белком.",
+      ingredients: [
+        { name: "Филе лосося", quantity: 200, unit: "г" },
+        { name: "Спаржа", quantity: 200, unit: "г" },
+        { name: "Лимон", quantity: 1, unit: "шт" },
+        { name: "Чеснок", quantity: 2, unit: "зубчика" },
+        { name: "Оливковое масло", quantity: 2, unit: "ст.л." },
+        { name: "Тимьян", quantity: 2, unit: "веточки" },
+        { name: "Соль", quantity: 1, unit: "щепотка" },
+        { name: "Перец", quantity: 1, unit: "щепотка" }
+      ],
+      instructions: [
+        "Маринуйте лосось в смеси оливкового масла, лимонного сока и измельченного чеснока",
+        "Подготовьте спаржу, удалив жесткие концы",
+        "Разогрейте гриль до средней температуры",
+        "Выложите лосось на гриль кожей вниз",
+        "Готовьте 4-5 минут с каждой стороны",
+        "Гриллируйте спаржу 3-4 минуты, периодически переворачивая",
+        "Сбрызните готовое блюдо лимонным соком",
+        "Украсьте свежим тимьяном"
+      ],
+      proteins: "34г",
+      carbs: "8г",
+      fats: "22г"
     },
     {
       id: 11,
@@ -239,7 +467,29 @@ export default function Home() {
       calories: "220 Ккал",
       time: "15 мин",
       image: "https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=800&auto=format&fit=crop&q=60",
-      category: "Обед"
+      category: "Обед",
+      description: "Ароматная кукуруза на гриле в мексиканском стиле с острым соусом, сыром и лаймом. Популярная уличная еда в современной подаче.",
+      ingredients: [
+        { name: "Кукуруза", quantity: 4, unit: "початка" },
+        { name: "Майонез", quantity: 4, unit: "ст.л." },
+        { name: "Чили", quantity: 1, unit: "ч.л." },
+        { name: "Сыр фета", quantity: 100, unit: "г" },
+        { name: "Лайм", quantity: 2, unit: "шт" },
+        { name: "Паприка", quantity: 1, unit: "ч.л." },
+        { name: "Кинза", quantity: 1, unit: "пучок" }
+      ],
+      instructions: [
+        "Отварите кукурузу или приготовьте на гриле",
+        "Смешайте майонез с чили и паприкой",
+        "Намажьте кукурузу пряным майонезом",
+        "Посыпьте раскрошенной фетой",
+        "Сбрызните соком лайма",
+        "Посыпьте рубленой кинзой",
+        "Подавайте горячей"
+      ],
+      proteins: "8г",
+      carbs: "28г",
+      fats: "12г"
     },
     {
       id: 12,
@@ -247,7 +497,32 @@ export default function Home() {
       calories: "290 Ккал",
       time: "40 мин",
       image: "https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?w=800&auto=format&fit=crop&q=60",
-      category: "Ужин"
+      category: "Ужин",
+      description: "Ароматный вьетнамский суп с рисовой лапшой, говядиной и свежими травами. Насыщенный бульон готовится с пряностями и специями.",
+      ingredients: [
+        { name: "Говядина", quantity: 200, unit: "г" },
+        { name: "Рисовая лапша", quantity: 200, unit: "г" },
+        { name: "Лук", quantity: 1, unit: "шт" },
+        { name: "Имбирь", quantity: 30, unit: "г" },
+        { name: "Корица", quantity: 1, unit: "палочка" },
+        { name: "Звездчатый анис", quantity: 2, unit: "шт" },
+        { name: "Ростки сои", quantity: 100, unit: "г" },
+        { name: "Базилик", quantity: 1, unit: "пучок" },
+        { name: "Лайм", quantity: 2, unit: "шт" }
+      ],
+      instructions: [
+        "Приготовьте бульон из говядины с пряностями",
+        "Отварите рисовую лапшу согласно инструкции",
+        "Нарежьте говядину тонкими ломтиками",
+        "Подготовьте все свежие травы и ростки",
+        "Разложите лапшу по тарелкам",
+        "Добавьте ломтики говядины",
+        "Залейте горячим бульоном",
+        "Подавайте с базиликом, ростками и лаймом"
+      ],
+      proteins: "24г",
+      carbs: "32г",
+      fats: "8г"
     }
   ];
 
@@ -297,6 +572,25 @@ export default function Home() {
       document.removeEventListener('click', handleClickOutside);
     };
   }, []);
+
+  // Инициализация Telegram WebApp
+  useEffect(() => {
+    initTelegramApp();
+    const user = getUserData();
+    if (user) {
+      console.log('Telegram user:', user);
+    }
+  }, []);
+
+  // Настройка главной кнопки при выборе рецепта
+  useEffect(() => {
+    if (selectedRecipe) {
+      setupMainButton('Сохранить рецепт', () => {
+        // Здесь можно отправить данные о выбранном рецепте в бот
+        console.log('Saving recipe:', selectedRecipe);
+      });
+    }
+  }, [selectedRecipe]);
 
   return (
     <div className="space-y-6">
@@ -486,6 +780,7 @@ export default function Home() {
             image: selectedRecipe.image,
             description: selectedRecipe.description,
             ingredients: selectedRecipe.ingredients,
+            instructions: selectedRecipe.instructions,
             proteins: selectedRecipe.proteins,
             carbs: selectedRecipe.carbs,
             fats: selectedRecipe.fats
