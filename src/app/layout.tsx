@@ -2,12 +2,14 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Link from 'next/link';
 import "./globals.css";
+import Script from 'next/script';
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Tasty Recipes - Your Culinary Journey",
   description: "Discover delicious recipes and cooking inspiration",
+  viewport: "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no",
 };
 
 export default function RootLayout({
@@ -17,9 +19,16 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} bg-gray-50 pb-16`}>
+      <head>
+        <Script 
+          src="https://telegram.org/js/telegram-web-app.js"
+          strategy="beforeInteractive"
+        />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+      </head>
+      <body className={`${inter.className} bg-gray-50 pb-16 overflow-hidden`}>
         {/* Main Content */}
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 overflow-y-auto" style={{ height: 'calc(100vh - 4rem)' }}>
           {children}
         </main>
 

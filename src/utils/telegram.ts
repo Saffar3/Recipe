@@ -27,6 +27,9 @@ declare global {
             username?: string;
           };
         };
+        isExpanded: boolean;
+        viewportHeight: number;
+        viewportStableHeight: number;
       };
     };
   }
@@ -38,7 +41,10 @@ export const tg = typeof window !== 'undefined' ? window.Telegram?.WebApp : null
 export const initTelegramApp = () => {
   if (tg) {
     tg.ready();
-    tg.expand();
+    // Расширяем окно на весь экран
+    if (!tg.isExpanded) {
+      tg.expand();
+    }
   }
 };
 
