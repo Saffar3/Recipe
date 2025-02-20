@@ -41,10 +41,10 @@ export const tg = typeof window !== 'undefined' ? window.Telegram?.WebApp : null
 export const initTelegramApp = () => {
   if (tg) {
     tg.ready();
-    // Расширяем окно на весь экран
-    if (!tg.isExpanded) {
+    // Добавляем небольшую задержку для гарантии, что WebApp полностью загружен
+    setTimeout(() => {
       tg.expand();
-    }
+    }, 50);
   }
 };
 
